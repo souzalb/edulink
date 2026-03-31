@@ -13,7 +13,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Credenciais inválidas");
+          return null;
         }
 
         const user = await prisma.user.findUnique({
@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || !user.password) {
-          throw new Error("Usuário não encontrado");
+          return null;
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isPasswordValid) {
-          throw new Error("Senha incorreta");
+          return null;
         }
 
         return {
@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        session.user.role = token.role as any;
       }
       return session;
     },

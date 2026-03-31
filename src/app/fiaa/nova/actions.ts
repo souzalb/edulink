@@ -12,8 +12,10 @@ export async function createFiaaAction(formData: FormData) {
   if (!session || session.user.role !== "DOCENTE") {
     throw new Error("Unauthorized");
   }
-
   const studentId = formData.get("studentId") as string;
+  if (!studentId || studentId.trim() === "") {
+    throw new Error("Você precisa selecionar um aluno para enviar a ficha.");
+  }
   const isDraft = formData.get("isDraft") === "true";
 
   // Difficulties

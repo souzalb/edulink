@@ -3,7 +3,11 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,7 +28,7 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError(result.error);
+      setError("Email acadêmico ou senha incorretos.");
       setLoading(false);
     } else {
       router.push("/");
@@ -33,65 +37,82 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center">
-      <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+    <div className="min-h-screen bg-muted/40 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-red-600 rounded-lg flex items-center justify-center mb-4 shadow-sm">
-            <span className="text-white font-bold text-2xl">S</span>
+          <div className="mx-auto w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-6 shadow-md border border-red-700/20">
+            <span className="text-white font-bold text-3xl select-none">S</span>
           </div>
-          <h2 className="text-2xl font-bold text-gray-800">SENAI MARIANO FERRAZ</h2>
-          <p className="text-gray-500 mt-2 text-sm">Sistema de Acompanhamento Pedagógico</p>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">SENAI</h2>
+          <p className="text-muted-foreground mt-2 font-medium">Sistema de Acompanhamento Pedagógico</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
-              {error}
-            </div>
-          )}
-          
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Email Acadêmico</label>
-            <div className="relative">
-              <span className="absolute left-3 top-3 text-gray-400">
-                <Mail size={18} />
-              </span>
-              <input
-                type="email"
-                required
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
-                placeholder="docente@senai.br"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-          </div>
+        <Card className="shadow-lg border-border/50">
+          <CardHeader>
+            <CardTitle className="text-xl">Acesso ao Sistema</CardTitle>
+            <CardDescription>
+              Insira suas credenciais abaixo para entrar na plataforma.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {error && (
+                <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-md border border-destructive/20 flex items-center gap-2 font-medium">
+                  <AlertCircle size={16} />
+                  {error}
+                </div>
+              )}
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Acadêmico</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    className="pl-10"
+                    placeholder="docente@senai.br"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
 
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700">Senha</label>
-            <div className="relative">
-              <span className="absolute left-3 top-3 text-gray-400">
-                <Lock size={18} />
-              </span>
-              <input
-                type="password"
-                required
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
-                placeholder="••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Senha</Label>
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type="password"
+                    required
+                    className="pl-10"
+                    placeholder="••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 rounded-lg transition-colors flex justify-center items-center disabled:opacity-70"
-          >
-            {loading ? "Entrando..." : "Acessar Plataforma"}
-          </button>
-        </form>
+              <Button
+                type="submit"
+                className="w-full mt-2"
+                size="lg"
+                disabled={loading}
+              >
+                {loading ? "Autenticando..." : "Entrar"}
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-center border-t border-border/40 pt-4">
+            <p className="text-xs text-muted-foreground">
+              Problemas para acessar? Contate o suporte técnico.
+            </p>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );

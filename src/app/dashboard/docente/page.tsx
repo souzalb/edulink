@@ -3,6 +3,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { FilePlus2, FileText, CheckCircle2 } from "lucide-react";
+import Header from "@/components/layout/Header";
 
 export default async function DocenteDashboard() {
   const session = await getServerSession(authOptions);
@@ -19,16 +20,8 @@ export default async function DocenteDashboard() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-red-600 rounded-md flex items-center justify-center text-white font-bold select-none cursor-default">S</div>
-            <h1 className="text-xl font-bold text-gray-800">Painel do Docente</h1>
-          </div>
-          <div className="text-sm text-gray-500 font-medium">Olá, {session.user.name}</div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-muted/40 flex flex-col">
+      <Header />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         <div className="flex justify-between items-center mb-8">

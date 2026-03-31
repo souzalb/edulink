@@ -16,6 +16,7 @@ export default function Accordion({ title, children, defaultOpen = false }: Acco
   return (
     <div className="border border-gray-200 rounded-lg bg-white overflow-hidden mb-4 shadow-sm">
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500"
       >
