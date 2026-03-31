@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  DOCENTE
+  OPP
+  AQV_OE
+}
+
+enum ReferralType {
+  OPP
+  AQV
+  OE
+  CT
+  CAP
+}
+
+enum FiaaStatus {
+  DRAFT
+  PENDING_OPP
+  ESCALATED
+  PENDING_SIGNATURES
+  CLOSED
+  ARCHIVED
+}
+
+enum PlanType {
+  RECOVERY
+  MAKEUP_ABSENCE
+  MAKEUP_CONTENT
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+
+  fiaasCreated FIAA[]
+}
+
+model Class {
+  id        String    @id @default(uuid())
+  name      String
+  students  Student[]
+}
+
+model Student {
+  id        String  @id @default(uuid())
+  name      String
+  classId   String
+  class     Class   @relation(fields: [classId], references: [id])
+  fiaas     FIAA[]
+}
+
+model FIAA {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+  
+  teacherId String
+  teacher   User    @relation(fields: [teacherId], references: [id])
+
+  status    FiaaStatus @default(DRAFT)
+
+  // Difficulties (Dificuldades Observadas)
+  diffWorkExecution       Boolean @default(false)
+  diffWorkQuality         Boolean @default(false)
+  diffPPEUse              Boolean @default(false)
+  diffWorkPace            Boolean @default(false)
+  diffSafetyRules         Boolean @default(false)
+  diffAbilityToListen     Boolean @default(false)
+  diffEquipmentHandling   Boolean @default(false)
+  diffEnvironmentalCare   Boolean @default(false)
+  diffSociability         Boolean @default(false)
+  diffInitiative          Boolean @default(false)
+  diffPropertyCare        Boolean @default(false)
+  diffMotivation          Boolean @default(false)
+  diffParticipation       Boolean @default(false)
+  diffPersonalHygiene     Boolean @default(false)
+  diffDisciplinaryConduct Boolean @default(false)
+  diffTargetAchievement   Boolean @default(false)
+  diffUniformUse          Boolean @default(false)
+  diffCooperation         Boolean @default(false)
+  diffCommitment          Boolean @default(false)
+  diffAttendance          Boolean @default(false)
+  diffResultFocus         Boolean @default(false)
+  diffKnowledge           Boolean @default(false)
+  diffNotDoingTasks       Boolean @default(false)
+  diffProfessionalEthics  Boolean @default(false)
+  diffOther               String?
+
+  // Teacher Actions (Sugestões para o aluno)
+  actAdviseAttendance     Boolean @default(false)
+  actAdviseStudy          Boolean @default(false)
+  actAdviseSchedule       Boolean @default(false)
+  actAdviseNotes          Boolean @default(false)
+  actAdviseFocus          Boolean @default(false)
+  actAdviseSocialRules    Boolean @default(false)
+  actAdviseTasks          Boolean @default(false)
+  actAdviseParticipation  Boolean @default(false)
+  actAdviseRetest         Boolean @default(false)
+  actAdviseTutoring       Boolean @default(false)
+  actAdviseMakeUpClasses  Boolean @default(false)
+
+  // Actions for Guardians (Sugestões para Responsáveis)
+  guardAdviseStudyHabits  Boolean @default(false)
+  guardAdviseSchedule     Boolean @default(false)
+  guardAdviseMonitor      Boolean @default(false)
+  guardAdviseContactSchool Boolean @default(false)
+  guardAdviseAttendance   Boolean @default(false)
+
+  // Complementary Info
+  absences                Int?    @default(0)
+  lop                     String? 
+  referral                ReferralType?
+
+  // School Providences
+  provGuidance            ReferralType?
+  provGuardianMeeting     Boolean @default(false)
+  provDisciplinarySanction Boolean @default(false)
+  provMakeupPlan          Boolean @default(false)
+  provRecoveryPlanAuth    Boolean @default(false)
+  provObservations        String?
+
+  recoveryPlans           RecoveryPlan[]
+}
+
+model RecoveryPlan {
+  id        String   @id @default(uuid())
+  fiaaId    String
+  fiaa      FIAA     @relation(fields: [fiaaId], references: [id])
+
+  type      PlanType
+
+  // Controlling fields
+  coordAuth             Boolean @default(false)
+  studentAwareness      Boolean @default(false)
+  guardianAwareness     Boolean @default(false)
+  planSatisfactory      Boolean @default(false)
+  justification         String?
+
+  schedules             RecoverySchedule[]
+}
+
+model RecoverySchedule {
+  id              String       @id @default(uuid())
+  recoveryPlanId  String
+  recoveryPlan    RecoveryPlan @relation(fields: [recoveryPlanId], references: [id], onDelete: Cascade)
+  
+  date            DateTime
+  time            String
+  classesNum      Int
+  content         String
+  teachingStrategy String
+}
