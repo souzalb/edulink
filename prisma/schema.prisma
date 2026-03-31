@@ -17,12 +17,16 @@ enum ReferralType {
   AQV
   OE
   CT
+  COORD
   CAP
 }
 
 enum FiaaStatus {
   DRAFT
   PENDING_OPP
+  PENDING_TEACHER
+  PENDING_GUARDIAN
+  CONCLUDED
   ESCALATED
   PENDING_SIGNATURES
   CLOSED
@@ -81,6 +85,7 @@ model FIAA {
   diffWorkPace            Boolean @default(false)
   diffSafetyRules         Boolean @default(false)
   diffAbilityToListen     Boolean @default(false)
+  diffCommunication       Boolean @default(false)
   diffEquipmentHandling   Boolean @default(false)
   diffEnvironmentalCare   Boolean @default(false)
   diffSociability         Boolean @default(false)

@@ -39,8 +39,10 @@ export function CreateStudentDialog({ classes }: { classes: any[] }) {
               <Label>Turma</Label>
               <input type="hidden" name="classId" value={classId} required />
               <Select value={classId} onValueChange={(val) => setClassId(val || "")}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione a turma..." />
+                <SelectTrigger className="font-medium">
+                  <SelectValue placeholder="Selecione a turma...">
+                    {classes.find(c => c.id === classId)?.name}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {classes.map(c => (

@@ -31,5 +31,27 @@ export async function linkTeacherAction(formData: FormData) {
     data: { teachers: { connect: { id: teacherId } } }
   });
   revalidatePath("/management");
+  revalidatePath("/management");
   revalidatePath("/fiaa/nova");
+}
+
+export async function createTeacherAction(formData: FormData) {
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  
+  if (!name || !email) throw new Error("Name and email are required");
+
+  const bcrypt = await import("bcryptjs");
+  const defaultPasswordHash = await bcrypt.hash("123456", 10);
+
+  await prisma.user.create({
+    data: { 
+      name, 
+      email, 
+      password: defaultPasswordHash,
+      role: "DOCENTE"
+    } 
+  });
+  
+  revalidatePath("/management");
 }

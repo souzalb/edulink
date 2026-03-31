@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Header from "@/components/layout/Header";
-import { ArrowLeft, User, BookOpen, Clock, Frown, Lightbulb, UserCheck } from "lucide-react";
+import { ArrowLeft, User, BookOpen, Clock, Frown, Lightbulb, UserCheck, ShieldCheck, UserCircle, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -15,6 +15,7 @@ const getStatusBadge = (status: string) => {
     case "DRAFT": return <Badge variant="secondary">Rascunho</Badge>;
     case "PENDING_OPP": return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200">Aguardando Orientação</Badge>;
     case "PENDING_TEACHER": return <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50">Retornado ao Docente</Badge>;
+    case "PENDING_GUARDIAN": return <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200">Aguardando Responsável</Badge>;
     case "CONCLUDED": return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200">Concluído</Badge>;
     default: return <Badge variant="outline">{status}</Badge>;
   }
@@ -54,22 +55,21 @@ export default async function FiaaDetailsPage({ params }: { params: Promise<{ id
   const isDocente = role === "DOCENTE";
   const backParams = isDocente ? "/dashboard/docente" : "/dashboard/pedagogico";
 
-  // Re-map checked fields for UX display
-  const difficultiesChecked = [
-    { key: 'diffWorkExecution', label: "Execução do trabalho" },
-    { key: 'diffWorkQuality', label: "Qualidade do Trabalho" },
-    { key: 'diffPPEUse', label: "Uso do EPI ou EPC" },
-    { key: 'diffWorkPace', label: "Ritmo de trabalho" },
-    { key: 'diffSafetyRules', label: "Atendimento às regras de segurança" },
-    { key: 'diffPersonalHygiene', label: "Higiene Pessoal" },
-    { key: 'diffDisciplinaryConduct', label: "Conduta Disciplinar" }
-  ].filter(d => (fiaa as any)[d.key]);
+  const renderActiveFields = (fields: { key: string, label: string }[], colorClass: string) => {
+    const active = fields.filter(f => (fiaa as any)[f.key] === true);
+    if (active.length === 0) return null;
 
-  const actionsChecked = [
-    { key: 'actAdviseAttendance', label: "Frequentar regularmente as aulas" },
-    { key: 'actAdviseStudy', label: "Estudar os conteúdos desenvolvidos" },
-    { key: 'actAdviseTutoring', label: "Procurar Plantão de Dúvidas" }
-  ].filter(a => (fiaa as any)[a.key]);
+    return (
+      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+        {active.map(f => (
+          <li key={f.key} className={`flex items-center gap-2 text-sm p-2 rounded border border-dotted ${colorClass}`}>
+            <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
+            <span>{f.label}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-muted/40 pb-12">
@@ -118,48 +118,134 @@ export default async function FiaaDetailsPage({ params }: { params: Promise<{ id
              </div>
           </div>
 
-          <div className="p-6 md:p-8 space-y-8">
-            <section>
-               <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2 border-b pb-2">
+          <div className="p-6 md:p-8 space-y-10">
+            
+            {/* DIFICULDADES */}
+            <section className="space-y-6">
+               <h3 className="text-lg font-bold text-foreground flex items-center gap-2 border-b pb-2">
                  <Frown className="text-red-500" size={20}/> 
                  Dificuldades Observadas
                </h3>
-               {difficultiesChecked.length > 0 ? (
-                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                   {difficultiesChecked.map(d => (
-                     <li key={d.key} className="flex items-start gap-2 text-sm text-gray-700 bg-red-50/50 p-2.5 rounded-md border border-red-100">
-                       <span className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" />
-                       <span className="font-medium text-red-900">{d.label}</span>
-                     </li>
-                   ))}
-                 </ul>
-               ) : (
-                 <p className="text-sm text-muted-foreground">Nenhuma dificuldade específica marcada.</p>
-               )}
+               
+               <div className="space-y-4">
+                 <div>
+                   <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider">1. Execução do Trabalho</h4>
+                   {renderActiveFields([
+                     { key: 'diffWorkExecution', label: "Execução do trabalho" },
+                     { key: 'diffWorkQuality', label: "Qualidade do Trabalho" },
+                     { key: 'diffWorkPace', label: "Ritmo de trabalho" },
+                     { key: 'diffEquipmentHandling', label: "Manuseio de máquinas/equipamentos" },
+                     { key: 'diffInitiative', label: "Iniciativa" },
+                     { key: 'diffParticipation', label: "Participação" },
+                     { key: 'diffTargetAchievement', label: "Cumprimento de metas" },
+                     { key: 'diffCommitment', label: "Comprometimento" },
+                     { key: 'diffResultFocus', label: "Foco em resultado" },
+                     { key: 'diffNotDoingTasks', label: "Não realização de atividades" },
+                   ], "bg-red-50 text-red-700 border-red-200")}
+                 </div>
+
+                 <div>
+                   <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider">2. Higiene e Segurança</h4>
+                   {renderActiveFields([
+                     { key: 'diffPPEUse', label: "Uso do EPI ou EPC" },
+                     { key: 'diffSafetyRules', label: "Atendimento a normas de segurança" },
+                     { key: 'diffEnvironmentalCare', label: "Cuidados ambientes (org./limp.)" },
+                     { key: 'diffPropertyCare', label: "Cuidados com bens da escola" },
+                     { key: 'diffPersonalHygiene', label: "Higiene Pessoal" },
+                     { key: 'diffUniformUse', label: "Uso do uniforme" },
+                   ], "bg-orange-50 text-orange-700 border-orange-200")}
+                 </div>
+
+                 <div>
+                   <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider">3. Qualidades Pessoais</h4>
+                   {renderActiveFields([
+                     { key: 'diffCommunication', label: "Saber se comunicar" },
+                     { key: 'diffAbilityToListen', label: "Habilidade para ouvir" },
+                     { key: 'diffSociability', label: "Sociabilidade" },
+                     { key: 'diffMotivation', label: "Motivação / interesse" },
+                     { key: 'diffDisciplinaryConduct', label: "Conduta disciplinar" },
+                     { key: 'diffCooperation', label: "Cooperação" },
+                     { key: 'diffAttendance', label: "Assiduidade (atrasos/falta)" },
+                     { key: 'diffKnowledge', label: "Conhecimento" },
+                     { key: 'diffProfessionalEthics', label: "Ética profissional" },
+                   ], "bg-blue-50 text-blue-700 border-blue-200")}
+                 </div>
+
+                 {fiaa.diffOther && (
+                   <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                     <h4 className="text-xs font-bold text-gray-500 uppercase mb-1">Outras Dificuldades</h4>
+                     <p className="text-sm text-gray-700 italic">{fiaa.diffOther}</p>
+                   </div>
+                 )}
+               </div>
             </section>
 
-            <section>
-               <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2 border-b pb-2">
+            {/* AÇÕES */}
+            <section className="space-y-6">
+               <h3 className="text-lg font-bold text-foreground flex items-center gap-2 border-b pb-2">
                  <Lightbulb className="text-emerald-500" size={20}/> 
-                 Ações Tomadas pelo Docente
+                 Ações do Docente
                </h3>
-               {actionsChecked.length > 0 ? (
-                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                   {actionsChecked.map(a => (
-                     <li key={a.key} className="flex items-start gap-2 text-sm text-gray-700 bg-emerald-50/50 p-2.5 rounded-md border border-emerald-100">
-                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                       <span className="font-medium text-emerald-900">{a.label}</span>
-                     </li>
-                   ))}
-                 </ul>
-               ) : (
-                 <p className="text-sm text-muted-foreground">Nenhuma sugestão ou ação secundária foi descrita.</p>
-               )}
+
+               <div className="space-y-4">
+                 <div>
+                   <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider">1. Sugestões para o Aluno</h4>
+                   {renderActiveFields([
+                     { key: 'actAdviseAttendance', label: "Frequentar regularmente as aulas" },
+                     { key: 'actAdviseStudy', label: "Estudar os conteúdos" },
+                     { key: 'actAdviseSchedule', label: "Organizar horário para estudo" },
+                     { key: 'actAdviseNotes', label: "Fazer anotações" },
+                     { key: 'actAdviseFocus', label: "Manter-se atento" },
+                     { key: 'actAdviseSocialRules', label: "Regras de convivência social" },
+                     { key: 'actAdviseTasks', label: "Realizar as tarefas propostas" },
+                     { key: 'actAdviseParticipation', label: "Participar efetivamente" },
+                     { key: 'actAdviseRetest', label: "Refazer avaliações/exercícios" },
+                     { key: 'actAdviseTutoring', label: "Procurar Plantão de Dúvida" },
+                     { key: 'actAdviseMakeUpClasses', label: "Realizar reposição/recuperação" },
+                   ], "bg-emerald-50 text-emerald-700 border-emerald-200")}
+                 </div>
+
+                 <div>
+                   <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider">2. Sugestões para Responsáveis</h4>
+                   {renderActiveFields([
+                     { key: 'guardAdviseStudyHabits', label: "Estimular hábitos de estudo" },
+                     { key: 'guardAdviseSchedule', label: "Conciliar estudo e lazer" },
+                     { key: 'guardAdviseMonitor', label: "Acompanhar desempenho escolar" },
+                     { key: 'guardAdviseContactSchool', label: "Manter contato com a escola" },
+                     { key: 'guardAdviseAttendance', label: "Atentar para frequência regular" },
+                   ], "bg-teal-50 text-teal-700 border-teal-200")}
+                 </div>
+               </div>
             </section>
 
-            {/* Apenas usuários da área pedagógica podem gerenciar o workflow ativamente deste ponto para a frente */}
+            {/* ENCAMINHAMENTO */}
+            <section className="space-y-6 pt-4 border-t">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-500 uppercase flex items-center gap-2 mb-3">
+                      <ShieldCheck size={16}/> Destino do Encaminhamento
+                    </h3>
+                    <Badge variant="outline" className="text-base py-1 px-4 border-primary/30 text-primary bg-primary/5">
+                      {fiaa.referral}
+                    </Badge>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-500 uppercase flex items-center gap-2 mb-3">
+                      <MessageSquare size={16}/> Informações Complementares
+                    </h3>
+                    <div className="text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-200 whitespace-pre-wrap">
+                      {fiaa.provObservations || "Nenhuma observação complementar registrada."}
+                    </div>
+                  </div>
+               </div>
+            </section>
+
+            {/* WORKFLOW */}
             {!isDocente && (
-               <FiaaWorkflowButtons fiaaId={fiaa.id} currentStatus={fiaa.status} />
+               <div className="pt-6 border-t">
+                 <FiaaWorkflowButtons fiaaId={fiaa.id} currentStatus={fiaa.status} />
+               </div>
             )}
             
           </div>

@@ -42,8 +42,10 @@ export function LinkTeacherDialog({ classId, className, allTeachers, classTeache
             <div className="space-y-2">
               <Label>Selecione o Docente</Label>
               <Select value={teacherId} onValueChange={(val) => setTeacherId(val || "")}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Escolha um docente..." />
+                <SelectTrigger className="font-medium">
+                  <SelectValue placeholder="Escolha um docente...">
+                    {allTeachers.find((t: any) => t.id === teacherId)?.name}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {availableTeachers.length === 0 ? (

@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { createFiaaAction } from "./actions";
 import Accordion from "@/components/ui/Accordion";
-import { Save, Send } from "lucide-react";
+import { Save, Send, ClipboardList, ShieldCheck, UserCheck, GraduationCap, Users as UsersIcon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 type Student = { id: string; name: string };
 type ClassType = { id: string; name: string; students: Student[] };
@@ -32,8 +33,10 @@ export function FiaaForm({ classes }: { classes: ClassType[] }) {
               setSelectedStudentId(""); // Reset student
             }}
           >
-            <SelectTrigger className="bg-white">
-              <SelectValue placeholder="Selecione a sua turma" />
+            <SelectTrigger className="bg-white font-medium">
+              <SelectValue placeholder="Selecione a sua turma">
+                {classes.find(c => c.id === selectedClassId)?.name}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {classes.length === 0 ? (
@@ -55,8 +58,10 @@ export function FiaaForm({ classes }: { classes: ClassType[] }) {
             onValueChange={(val) => setSelectedStudentId(val || "")}
             disabled={!selectedClassId}
           >
-            <SelectTrigger className="bg-white">
-              <SelectValue placeholder={selectedClassId ? "Selecione o aluno" : "Selecione a turma primeiro"} />
+            <SelectTrigger className="bg-white font-medium">
+              <SelectValue placeholder={selectedClassId ? "Selecione o aluno" : "Selecione a turma primeiro"}>
+                {students.find(s => s.id === selectedStudentId)?.name}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {students.map(s => (
@@ -67,25 +72,115 @@ export function FiaaForm({ classes }: { classes: ClassType[] }) {
         </div>
       </div>
 
-      <Accordion title="Dificuldades Observadas" defaultOpen={true}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6">
-          <SwitchItem name="diffWorkExecution" label="Execução do trabalho" />
-          <SwitchItem name="diffWorkQuality" label="Qualidade do Trabalho" />
-          <SwitchItem name="diffPPEUse" label="Uso do EPI ou EPC" />
-          <SwitchItem name="diffWorkPace" label="Ritmo de trabalho" />
-          <SwitchItem name="diffSafetyRules" label="Atendimento às regras de segurança" />
-          <SwitchItem name="diffPersonalHygiene" label="Higiene Pessoal" />
-          <SwitchItem name="diffDisciplinaryConduct" label="Conduta Disciplinar" />
-        </div>
-      </Accordion>
+      <div className="space-y-6">
+        <h2 className="text-lg font-bold flex items-center gap-2 px-2 border-l-4 border-primary">
+           Dificuldades Observadas
+        </h2>
+        
+        <Accordion title="1. Execução do Trabalho" defaultOpen={true}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6">
+            <SwitchItem name="diffWorkExecution" label="Execução do trabalho" />
+            <SwitchItem name="diffWorkQuality" label="Qualidade do Trabalho" />
+            <SwitchItem name="diffWorkPace" label="Ritmo de trabalho" />
+            <SwitchItem name="diffEquipmentHandling" label="Manuseio de máquinas/equipamentos" />
+            <SwitchItem name="diffInitiative" label="Iniciativa" />
+            <SwitchItem name="diffParticipation" label="Participação" />
+            <SwitchItem name="diffTargetAchievement" label="Cumprimento de metas" />
+            <SwitchItem name="diffCommitment" label="Comprometimento" />
+            <SwitchItem name="diffResultFocus" label="Foco em resultado" />
+            <SwitchItem name="diffNotDoingTasks" label="Não realização de atividades" />
+          </div>
+        </Accordion>
 
-      <Accordion title="Sugestões / Ações Tomadas pelo Docente">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">
-          <SwitchItem name="actAdviseAttendance" label="Frequentar regularmente as aulas" />
-          <SwitchItem name="actAdviseStudy" label="Estudar os conteúdos desenvolvidos" />
-          <SwitchItem name="actAdviseTutoring" label="Procurar Plantão de Dúvidas" />
+        <Accordion title="2. Higiene e Segurança">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6">
+            <SwitchItem name="diffPPEUse" label="Uso do EPI ou EPC" />
+            <SwitchItem name="diffSafetyRules" label="Atendimento a normas de segurança" />
+            <SwitchItem name="diffEnvironmentalCare" label="Cuidados ambientes (org./limp.)" />
+            <SwitchItem name="diffPropertyCare" label="Cuidados com bens da escola" />
+            <SwitchItem name="diffPersonalHygiene" label="Higiene Pessoal" />
+            <SwitchItem name="diffUniformUse" label="Uso do uniforme" />
+          </div>
+        </Accordion>
+
+        <Accordion title="3. Qualidades Pessoais">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6">
+            <SwitchItem name="diffCommunication" label="Saber se comunicar" />
+            <SwitchItem name="diffAbilityToListen" label="Habilidade para ouvir" />
+            <SwitchItem name="diffSociability" label="Sociabilidade" />
+            <SwitchItem name="diffMotivation" label="Motivação / interesse" />
+            <SwitchItem name="diffDisciplinaryConduct" label="Conduta disciplinar" />
+            <SwitchItem name="diffCooperation" label="Cooperação" />
+            <SwitchItem name="diffAttendance" label="Assiduidade (atrasos/falta)" />
+            <SwitchItem name="diffKnowledge" label="Conhecimento" />
+            <SwitchItem name="diffProfessionalEthics" label="Ética profissional" />
+          </div>
+        </Accordion>
+
+        <div className="px-4 py-3 bg-white border rounded-lg shadow-sm">
+           <Label htmlFor="diffOther" className="text-sm font-semibold mb-2 block">Dificuldades - Outros (Opcional)</Label>
+           <Textarea id="diffOther" name="diffOther" placeholder="Descreva outras dificuldades não citadas..." />
         </div>
-      </Accordion>
+      </div>
+
+      <div className="space-y-6">
+        <h2 className="text-lg font-bold flex items-center gap-2 px-2 border-l-4 border-primary">
+           Ações do Docente
+        </h2>
+
+        <Accordion title="1. Sugestões para o Aluno" defaultOpen={true}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6">
+            <SwitchItem name="actAdviseAttendance" label="Frequentar regularmente as aulas" />
+            <SwitchItem name="actAdviseStudy" label="Estudar os conteúdos" />
+            <SwitchItem name="actAdviseSchedule" label="Organizar horário para estudo" />
+            <SwitchItem name="actAdviseNotes" label="Fazer anotações" />
+            <SwitchItem name="actAdviseFocus" label="Manter-se atento" />
+            <SwitchItem name="actAdviseSocialRules" label="Regras de convivência social" />
+            <SwitchItem name="actAdviseTasks" label="Realizar as tarefas propostas" />
+            <SwitchItem name="actAdviseParticipation" label="Participar efetivamente" />
+            <SwitchItem name="actAdviseRetest" label="Refazer avaliações/exercícios" />
+            <SwitchItem name="actAdviseTutoring" label="Procurar Plantão de Dúvida" />
+            <SwitchItem name="actAdviseMakeUpClasses" label="Realizar reposição/recuperação" />
+          </div>
+        </Accordion>
+
+        <Accordion title="2. Sugestões para Responsáveis">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6">
+            <SwitchItem name="guardAdviseStudyHabits" label="Estimular hábitos de estudo" />
+            <SwitchItem name="guardAdviseSchedule" label="Conciliar estudo e lazer" />
+            <SwitchItem name="guardAdviseMonitor" label="Acompanhar desempenho escolar" />
+            <SwitchItem name="guardAdviseContactSchool" label="Manter contato com a escola" />
+            <SwitchItem name="guardAdviseAttendance" label="Atentar para frequência regular" />
+          </div>
+        </Accordion>
+      </div>
+
+      <div className="space-y-6 pt-6 border-t">
+         <h2 className="text-lg font-bold flex items-center gap-2 px-2 border-l-4 border-primary">
+           Encaminhamento e Info Complementar
+         </h2>
+
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div className="space-y-3">
+             <Label htmlFor="referral" className="font-semibold">Destino do Encaminhamento</Label>
+             <Select name="referral" defaultValue="OPP">
+               <SelectTrigger id="referral" className="bg-white">
+                 <SelectValue placeholder="Selecione o setor" />
+               </SelectTrigger>
+               <SelectContent>
+                 <SelectItem value="OPP">OPP (Orientação Pedagógica)</SelectItem>
+                 <SelectItem value="AQV">AQV (Qualidade de Vida)</SelectItem>
+                 <SelectItem value="COORD">Coordenador</SelectItem>
+               </SelectContent>
+             </Select>
+           </div>
+           
+           <div className="space-y-3">
+             <Label htmlFor="provObservations" className="font-semibold">Informações Complementares</Label>
+             <Textarea id="provObservations" name="provObservations" className="bg-white min-h-[100px]" placeholder="Adicione observações importantes para o setor pedagógico..." />
+           </div>
+         </div>
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-4 justify-end pt-8 mt-8 border-t border-border">
         <Button
@@ -106,10 +201,10 @@ export function FiaaForm({ classes }: { classes: ClassType[] }) {
           value="false"
           size="lg"
           className="gap-2"
-          title="A Ficha vai diretamente para a Orientação"
+          title="A Ficha vai diretamente para o setor selecionado"
           disabled={!selectedStudentId}
         >
-          <Send size={18} /> Enviar p/ Orientação
+          <Send size={18} /> Enviar FIAA
         </Button>
       </div>
     </form>
@@ -117,7 +212,6 @@ export function FiaaForm({ classes }: { classes: ClassType[] }) {
 }
 
 function SwitchItem({ name, label }: { name: string, label: string }) {
-  // We use standard checkbox hidden input to map to the switch value for native FormData submission
   return (
     <div className="flex flex-row items-center justify-between rounded-lg border p-3 hover:bg-muted/40 transition-colors shadow-sm bg-white">
       <div className="space-y-0.5">

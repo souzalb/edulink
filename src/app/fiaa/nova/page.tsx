@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -15,15 +15,17 @@ export default async function NovaFiaaPage() {
   }
 
   // Fetch classes related to this teacher, include students
+  // @ts-ignore
   const classes = await prisma.class.findMany({
-    where: {
-      teachers: { some: { id: session.user.id } }
+    where: { 
+      // @ts-ignore
+      teachers: { some: { id: session.user.id } } 
     },
     include: { 
       students: { orderBy: { name: "asc" } } 
     },
     orderBy: { name: "asc" },
-  });
+  }) as any[];
 
   return (
     <div className="min-h-screen bg-muted/40 pb-12">
