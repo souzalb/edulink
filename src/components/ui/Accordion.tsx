@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AccordionProps {
   title: string;
@@ -18,7 +19,10 @@ export default function Accordion({ title, children, defaultOpen = false }: Acco
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500"
+        className={cn(
+          "w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary rounded-t-lg",
+          !isOpen && "rounded-b-lg"
+        )}
       >
         <span className="font-semibold text-gray-800">{title}</span>
         <motion.div

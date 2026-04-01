@@ -2,8 +2,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { Users, BookOpen, UserCircle } from "lucide-react";
+import { Users, BookOpen, UserCircle, ArrowLeft } from "lucide-react";
 import Header from "@/components/layout/Header";
+import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateClassDialog } from "./components/CreateClassDialog";
 import { CreateStudentDialog } from "./components/CreateStudentDialog";
@@ -45,8 +46,18 @@ export default async function ManagementPage() {
     <div className="min-h-screen bg-muted/40 flex flex-col">
       <Header />
       
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <main className="flex-1 w-full mx-auto px-4 sm:px-8 lg:px-10 py-8">
         
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-3xl font-outfit font-bold text-gray-900 tracking-tight text-foreground uppercase">Gestão do Sistema</h1>
+            <p className="text-muted-foreground text-sm">Administre turmas, alunos e o corpo docente da unidade.</p>
+          </div>
+          <Link href="/dashboard/pedagogico" className="text-sm font-semibold text-muted-foreground hover:text-foreground flex items-center gap-2 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-border transition-all hover:shadow-md">
+            <ArrowLeft size={18} /> Voltar ao Painel
+          </Link>
+        </div>
+
         <Tabs defaultValue="turmas" className="w-full">
           <TabsList className="grid w-full grid-cols-3 max-w-md mb-8">
             <TabsTrigger value="turmas">Turmas</TabsTrigger>
@@ -67,7 +78,7 @@ export default async function ManagementPage() {
                 <div className="text-center text-muted-foreground py-8 border border-dashed rounded-lg">Nenhuma turma cadastrada.</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {classes.map((c) => (
+                  {classes.map((c: any) => (
                     <div key={c.id} className="p-4 border border-border rounded-lg bg-gray-50 flex flex-col gap-3">
                       <div className="flex justify-between items-start">
                         <span className="font-bold text-lg text-foreground">{c.name}</span>
@@ -136,13 +147,13 @@ export default async function ManagementPage() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {teachers.map(t => (
+                {teachers.map((t: any) => (
                   <div key={t.id} className="p-4 border rounded-lg flex flex-col gap-2">
                      <span className="font-bold text-[15px]">{t.name}</span>
                      <span className="text-xs text-muted-foreground">{t.email}</span>
                      <div className="flex flex-wrap gap-1 mt-2 border-t pt-2">
                         {t.classes.length > 0 ? (
-                           t.classes.map(c => (
+                           t.classes.map((c: any) => (
                              <span key={c.id} className="bg-gray-100 text-gray-700 text-[10px] px-2 py-0.5 rounded border">
                                {c.name}
                              </span>

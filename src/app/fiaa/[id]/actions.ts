@@ -6,7 +6,13 @@ import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-export async function updateFiaaStatus(fiaaId: string, newStatus: FiaaStatus) {
+export async function updateFiaaStatus(
+  fiaaId: string, 
+  newStatus: FiaaStatus,
+  feedback?: string,
+  acoes?: string,
+  newReferral?: any
+) {
   const session = await getServerSession(authOptions);
   
   if (!session || !["OPP", "AQV_OE"].includes(session.user.role as string)) {
@@ -14,9 +20,18 @@ export async function updateFiaaStatus(fiaaId: string, newStatus: FiaaStatus) {
   }
 
   try {
+    // @ts-ignore
     await prisma.fIAA.update({
       where: { id: fiaaId },
-      data: { status: newStatus },
+      data: { 
+        status: newStatus,
+        // @ts-ignore
+        referral: newReferral || undefined,
+        // @ts-ignore
+        feedbackPedagogico: feedback,
+        // @ts-ignore
+        acoesPedagogico: acoes
+      },
     });
 
     revalidatePath(`/fiaa/${fiaaId}`);

@@ -16,6 +16,13 @@ type ClassType = { id: string; name: string; students: Student[] };
 export function FiaaForm({ classes }: { classes: ClassType[] }) {
   const [selectedClassId, setSelectedClassId] = useState<string>("");
   const [selectedStudentId, setSelectedStudentId] = useState<string>("");
+  const [referral, setReferral] = useState<string>("OPP");
+
+  const referralOptions = [
+    { value: "OPP", label: "OPP (Orientação Pedagógica)" },
+    { value: "AQV", label: "AQV (Qualidade de Vida)" },
+    { value: "COORD", label: "Coordenador" },
+  ];
 
   const selectedClass = classes.find(c => c.id === selectedClassId);
   const students = selectedClass?.students || [];
@@ -35,7 +42,7 @@ export function FiaaForm({ classes }: { classes: ClassType[] }) {
           >
             <SelectTrigger className="bg-white font-medium">
               <SelectValue placeholder="Selecione a sua turma">
-                {classes.find(c => c.id === selectedClassId)?.name}
+                {classes.find(c => c.id === selectedClassId)?.name || "Selecione a sua turma"}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
@@ -60,7 +67,7 @@ export function FiaaForm({ classes }: { classes: ClassType[] }) {
           >
             <SelectTrigger className="bg-white font-medium">
               <SelectValue placeholder={selectedClassId ? "Selecione o aluno" : "Selecione a turma primeiro"}>
-                {students.find(s => s.id === selectedStudentId)?.name}
+                {students.find(s => s.id === selectedStudentId)?.name || (selectedClassId ? "Selecione o aluno" : "Selecione a turma primeiro")}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
@@ -162,15 +169,18 @@ export function FiaaForm({ classes }: { classes: ClassType[] }) {
 
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
            <div className="space-y-3">
+             <input type="hidden" name="referral" value={referral} />
              <Label htmlFor="referral" className="font-semibold">Destino do Encaminhamento</Label>
-             <Select name="referral" defaultValue="OPP">
+             <Select value={referral} onValueChange={(val) => setReferral(val || "OPP")}>
                <SelectTrigger id="referral" className="bg-white">
-                 <SelectValue placeholder="Selecione o setor" />
+                 <SelectValue placeholder="Selecione o setor">
+                   {referralOptions.find(o => o.value === referral)?.label}
+                 </SelectValue>
                </SelectTrigger>
                <SelectContent>
-                 <SelectItem value="OPP">OPP (Orientação Pedagógica)</SelectItem>
-                 <SelectItem value="AQV">AQV (Qualidade de Vida)</SelectItem>
-                 <SelectItem value="COORD">Coordenador</SelectItem>
+                 {referralOptions.map(opt => (
+                   <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                 ))}
                </SelectContent>
              </Select>
            </div>
@@ -213,7 +223,14 @@ export function FiaaForm({ classes }: { classes: ClassType[] }) {
 
 function SwitchItem({ name, label }: { name: string, label: string }) {
   return (
-    <div className="flex flex-row items-center justify-between rounded-lg border p-3 hover:bg-muted/40 transition-colors shadow-sm bg-white">
+    <div className="flex flex-row items-center justify-between rounded-lg border p-3 hover:bg-muted/40 transition-colors shadow-sm bg-white cursor-pointer group"
+         onClick={(e) => {
+           // Se o clique não foi no próprio switch, dispara o clique no switch via label/id
+           if ((e.target as HTMLElement).tagName !== 'BUTTON') {
+             const element = document.getElementById(name);
+             if (element) element.click();
+           }
+         }}>
       <div className="space-y-0.5">
         <Label htmlFor={name} className="text-sm font-medium cursor-pointer">
           {label}

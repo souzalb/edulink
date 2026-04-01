@@ -139,6 +139,10 @@ model FIAA {
   provRecoveryPlanAuth    Boolean @default(false)
   provObservations        String?
 
+  // Management Feedback
+  feedbackPedagogico      String?
+  acoesPedagogico         String?
+
   recoveryPlans           RecoveryPlan[]
 }
 

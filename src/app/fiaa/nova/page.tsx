@@ -31,7 +31,7 @@ export default async function NovaFiaaPage() {
     <div className="min-h-screen bg-muted/40 pb-12">
       <Header />
       
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <main className="flex-1 w-full mx-auto px-4 sm:px-8 lg:px-10 mt-8 mb-12">
         <div className="mb-6 flex items-center justify-between">
           <Link href="/dashboard/docente" className="text-muted-foreground hover:text-foreground flex items-center gap-2 font-medium bg-white px-4 py-2 rounded-lg shadow-sm border border-border">
             <ArrowLeft size={18} /> Voltar ao Painel
