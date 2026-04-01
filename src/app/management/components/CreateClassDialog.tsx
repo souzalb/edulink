@@ -17,8 +17,8 @@ export function CreateClassDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="sm" className="gap-1.5" />}>
-        <Plus size={16}/> Nova Turma
+      <DialogTrigger render={<Button className="h-10 rounded-xl gap-2 font-semibold shadow-sm px-5" />}>
+        <Plus size={18}/> Nova Turma
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

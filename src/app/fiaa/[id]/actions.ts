@@ -20,16 +20,12 @@ export async function updateFiaaStatus(
   }
 
   try {
-    // @ts-ignore
     await prisma.fIAA.update({
       where: { id: fiaaId },
       data: { 
         status: newStatus,
-        // @ts-ignore
         referral: newReferral || undefined,
-        // @ts-ignore
         feedbackPedagogico: feedback,
-        // @ts-ignore
         acoesPedagogico: acoes
       },
     });

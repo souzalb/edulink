@@ -19,6 +19,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { Pagination } from "./Pagination";
 
 type FiaaData = {
   id: string;
@@ -36,6 +37,10 @@ export function FiaaDataTable({ items }: { items: FiaaData[] }) {
   const [classFilter, setClassFilter] = useState("ALL");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // Get unique classes for the filter
   const uniqueClasses = useMemo(() => {
@@ -65,12 +70,26 @@ export function FiaaDataTable({ items }: { items: FiaaData[] }) {
     return matchesSearch && matchesStatus && matchesClass && matchesDate;
   });
 
+  // Calculate paginated items
+  const totalPages = Math.ceil(filteredItems.length / pageSize);
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredItems.slice(start, start + pageSize);
+  }, [filteredItems, currentPage, pageSize]);
+
+  // Reset to page 1 when filters change
+  const handleFilterChange = (setter: (val: string) => void) => (val: string | null) => {
+    setter(val || "ALL");
+    setCurrentPage(1);
+  };
+
   const clearFilters = () => {
     setSearchTerm("");
     setStatusFilter("ALL");
     setClassFilter("ALL");
     setStartDate("");
     setEndDate("");
+    setCurrentPage(1);
   };
 
   const getStatusInfo = (status: string) => {
@@ -108,7 +127,10 @@ export function FiaaDataTable({ items }: { items: FiaaData[] }) {
                 placeholder="Aluno ou docente..." 
                 className="pl-9 h-10 w-full"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
               />
             </div>
           </div>
@@ -118,7 +140,7 @@ export function FiaaDataTable({ items }: { items: FiaaData[] }) {
             <label className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-2 h-4">
               <Filter size={14}/> Turma
             </label>
-            <Select value={classFilter} onValueChange={(val) => setClassFilter(val || "ALL")}>
+            <Select value={classFilter} onValueChange={handleFilterChange(setClassFilter)}>
                 <SelectTrigger className="h-10 w-full">
                   <SelectValue placeholder="Selecione a Turma">
                     {classFilter === "ALL" ? "Todas as Turmas" : classFilter}
@@ -138,7 +160,7 @@ export function FiaaDataTable({ items }: { items: FiaaData[] }) {
             <label className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-2 h-4">
               <CheckCircle2 size={14}/> Status
             </label>
-            <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || "ALL")}>
+            <Select value={statusFilter} onValueChange={handleFilterChange(setStatusFilter)}>
               <SelectTrigger className="h-10 w-full">
                 <SelectValue placeholder="Selecione o Status">
                   {statusFilter === "ALL" ? "Todos os Status" : getStatusInfo(statusFilter).label}
@@ -164,7 +186,10 @@ export function FiaaDataTable({ items }: { items: FiaaData[] }) {
               type="date"
               className="h-10 w-full"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => {
+                setStartDate(e.target.value);
+                setCurrentPage(1);
+              }}
             />
           </div>
 
@@ -177,7 +202,10 @@ export function FiaaDataTable({ items }: { items: FiaaData[] }) {
               type="date"
               className="h-10 w-full"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => {
+                setEndDate(e.target.value);
+                setCurrentPage(1);
+              }}
             />
           </div>
 
@@ -219,14 +247,14 @@ export function FiaaDataTable({ items }: { items: FiaaData[] }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredItems.length === 0 ? (
+              {paginatedItems.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="h-32 text-center text-muted-foreground font-inter">
                     Nenhuma FIAA encontrada com os filtros atuais.
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredItems.map((item) => {
+                paginatedItems.map((item) => {
                   const statusInfo = getStatusInfo(item.status);
                   return (
                     <TableRow 
@@ -264,6 +292,18 @@ export function FiaaDataTable({ items }: { items: FiaaData[] }) {
             </TableBody>
           </Table>
         </div>
+
+        <Pagination 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          pageSize={pageSize}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setCurrentPage(1);
+          }}
+          totalItems={filteredItems.length}
+        />
       </div>
     </div>
   );

@@ -19,8 +19,8 @@ export function CreateStudentDialog({ classes }: { classes: any[] }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="sm" className="gap-1.5" />}>
-        <Plus size={16}/> Novo Aluno
+      <DialogTrigger render={<Button className="h-10 rounded-xl gap-2 font-semibold shadow-sm px-5" />}>
+        <Plus size={18}/> Novo Aluno
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

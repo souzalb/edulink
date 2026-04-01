@@ -21,6 +21,30 @@ export async function createStudentAction(formData: FormData) {
   revalidatePath("/management");
 }
 
+export async function createBulkStudentsAction(formData: FormData) {
+  const classId = formData.get("classId") as string;
+  const namesString = formData.get("names") as string;
+
+  if (!classId || !namesString) throw new Error("Turma e nomes são obrigatórios");
+
+  const names = namesString
+    .split("\n")
+    .map(name => name.trim())
+    .filter(name => name.length > 0);
+
+  if (names.length === 0) throw new Error("Nenhum nome válido encontrado");
+
+  // Use createMany for PostgreSQL (efficient)
+  await prisma.student.createMany({
+    data: names.map(name => ({
+      name,
+      classId
+    }))
+  });
+
+  revalidatePath("/management");
+}
+
 export async function linkTeacherAction(formData: FormData) {
   const classId = formData.get("classId") as string;
   const teacherId = formData.get("teacherId") as string;

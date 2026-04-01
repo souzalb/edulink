@@ -277,7 +277,6 @@ export default async function FiaaDetailsPage({ params }: { params: Promise<{ id
             </section>
 
             {/* FEEDBACK DA GESTÃO */}
-            {/* @ts-ignore */}
             {(fiaa.feedbackPedagogico || fiaa.acoesPedagogico) && (
               <section className="space-y-6 pt-10 border-t-2 border-primary/10 bg-primary/5 -mx-6 px-6 pb-10 rounded-b-xl mt-4">
                  <h3 className="text-lg font-outfit font-bold text-primary flex items-center gap-2 border-b border-primary/20 pb-3">
@@ -286,26 +285,22 @@ export default async function FiaaDetailsPage({ params }: { params: Promise<{ id
                  </h3>
 
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
-                    {/* @ts-ignore */}
                     {fiaa.feedbackPedagogico && (
                       <div className="space-y-3">
                         <label className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
                            Feedback ao Professor
                         </label>
                         <div className="bg-white p-5 rounded-xl border border-primary/20 text-sm shadow-md leading-relaxed text-gray-800 font-inter">
-                          {/* @ts-ignore */}
                           {fiaa.feedbackPedagogico}
                         </div>
                       </div>
                     )}
-                    {/* @ts-ignore */}
                     {fiaa.acoesPedagogico && (
                       <div className="space-y-3">
                         <label className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
                            Ações Tomadas
                         </label>
                         <div className="bg-white p-5 rounded-xl border border-primary/20 text-sm shadow-md leading-relaxed text-gray-800 font-inter">
-                          {/* @ts-ignore */}
                           {fiaa.acoesPedagogico}
                         </div>
                       </div>

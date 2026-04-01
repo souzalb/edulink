@@ -15,17 +15,15 @@ export default async function NovaFiaaPage() {
   }
 
   // Fetch classes related to this teacher, include students
-  // @ts-ignore
   const classes = await prisma.class.findMany({
     where: { 
-      // @ts-ignore
       teachers: { some: { id: session.user.id } } 
     },
     include: { 
       students: { orderBy: { name: "asc" } } 
     },
     orderBy: { name: "asc" },
-  }) as any[];
+  });
 
   return (
     <div className="min-h-screen bg-muted/40 pb-12">
