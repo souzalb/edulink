@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { updateFiaaStatus } from "./actions";
-import { CheckCircle2, XCircle, ArrowLeft, MessageSquare, ClipboardList, TrendingUp } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowLeft, MessageSquare, ClipboardList, TrendingUp, Sparkles, Send, ShieldCheck } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 export function FiaaWorkflowButtons({ 
   fiaaId, 
@@ -43,134 +44,154 @@ export function FiaaWorkflowButtons({
   const canEscalate = isAQV && (currentReferral === "AQV" || currentReferral === "OE");
   const canReturnToAQV = isOPP && (currentReferral === "OPP" || currentReferral === "COORD");
 
-  const gridCols = cn(
-    "grid grid-cols-1 gap-4",
-    (canEscalate || canReturnToAQV) ? "sm:grid-cols-4" : "sm:grid-cols-3"
-  );
-
   return (
-    <div className="space-y-8 pt-8 border-t border-border mt-10">
-      <div className="space-y-4">
-        <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-          <ClipboardList size={16} /> Registro de Retorno Pedagógico
-        </h3>
+    <div className="space-y-12 pt-16 border-t border-white/5 mt-16 transition-all duration-700">
+      
+      <motion.div 
+         initial={{ opacity: 0, y: 20 }}
+         whileInView={{ opacity: 1, y: 0 }}
+         className="space-y-8"
+      >
+        <div className="flex items-center gap-4 px-2">
+           <div className="h-10 w-1 bg-primary rounded-full shadow-[0_0_15px_rgba(237,28,36,0.5)]" />
+           <h3 className="text-2xl font-heading font-black text-foreground tracking-tightest uppercase-none text-glow flex items-center gap-3">
+              Registro de Providências
+              <Sparkles size={18} className="text-primary animate-pulse" />
+           </h3>
+        </div>
         
-        {/* Input Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-3 bg-white p-4 rounded-xl border border-border shadow-sm">
-            <label className="text-xs font-bold text-gray-700 uppercase flex items-center gap-2">
-              <MessageSquare size={14} className="text-primary"/> Feedback ao Professor
-            </label>
+        {/* INPUT STAGE */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="glass-card p-8 rounded-[2.5rem] space-y-4 hover:shadow-2xl hover:shadow-primary/5 transition-all">
+            <div className="flex items-center justify-between">
+               <label className="text-[10px] font-black text-primary uppercase tracking-widest pl-2 italic flex items-center gap-2">
+                  <MessageSquare size={14}/> Feedback ao Professor
+               </label>
+               <div className="w-2 h-2 rounded-full bg-emerald-500/40 animate-pulse" />
+            </div>
             <Textarea 
               placeholder="Digite aqui as orientações ou feedback para o docente..."
-              className="min-h-[120px] resize-none border-none bg-zinc-50 focus-visible:ring-0 p-4 text-sm rounded-lg"
+              className="min-h-[160px] glass-input rounded-2xl border-white/5 font-bold p-6 text-lg placeholder:text-muted-foreground/30 focus:ring-[8px]"
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
             />
-            <p className="text-[10px] text-muted-foreground italic border-t pt-2 mt-2">
-              Este texto será visível para o professor que relatou a FIAA.
+            <p className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-widest text-center pt-2 italic">
+              Visível no painel do docente solicitante.
             </p>
           </div>
-          <div className="space-y-3 bg-white p-4 rounded-xl border border-border shadow-sm">
-            <label className="text-xs font-bold text-gray-700 uppercase flex items-center gap-2">
-              <ClipboardList size={14} className="text-primary"/> Ações Tomadas pela Gestão
-            </label>
+
+          <div className="glass-card p-8 rounded-[2.5rem] space-y-4 hover:shadow-2xl hover:shadow-primary/5 transition-all">
+            <div className="flex items-center justify-between">
+               <label className="text-[10px] font-black text-primary uppercase tracking-widest pl-2 italic flex items-center gap-2">
+                  <ShieldCheck size={14}/> Ações da Gestão Técnica
+               </label>
+               <div className="w-2 h-2 rounded-full bg-indigo-500/40 animate-pulse" />
+            </div>
             <Textarea 
-              placeholder="Descreva as providências tomadas (ex: reunião, orientação ao aluno, contato telefônico)..."
-              className="min-h-[120px] resize-none border-none bg-zinc-50 focus-visible:ring-0 p-4 text-sm rounded-lg"
+              placeholder="Descreva as providências tomadas internamente..."
+              className="min-h-[160px] glass-input rounded-2xl border-white/5 font-bold p-6 text-lg placeholder:text-muted-foreground/30 focus:ring-[8px]"
               value={acoes}
               onChange={(e) => setAcoes(e.target.value)}
             />
-            <p className="text-[10px] text-muted-foreground italic border-t pt-2 mt-2">
-              Registro interno das providências realizadas pela coordenação/AQV.
+            <p className="text-[9px] text-muted-foreground/40 font-black uppercase tracking-widest text-center pt-2 italic">
+              Registro histórico para auditoria interna.
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Decision Section */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-          <CheckCircle2 size={16} /> Definir Próximo Passo do Fluxo
-        </h3>
+      {/* DECISION STAGE */}
+      <motion.div 
+         initial={{ opacity: 0, y: 20 }}
+         whileInView={{ opacity: 1, y: 0 }}
+         className="space-y-8"
+      >
+        <div className="flex items-center gap-4 px-2">
+           <div className="h-10 w-1 bg-indigo-500 rounded-full shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
+           <h3 className="text-2xl font-heading font-black text-foreground tracking-tightest uppercase-none text-glow">
+              Status Operacional
+           </h3>
+        </div>
 
-        <div className={gridCols}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
-          {/* Action: Escalate (Only for AQV) */}
           {canEscalate && (
-            <div className="group relative flex flex-col p-4 bg-white rounded-xl border border-indigo-100 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all shadow-sm">
-              <Button 
-                  className="gap-2 mb-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/10 cursor-pointer transition-all active:scale-95"
-                  onClick={() => handleUpdate("PENDING_OPP", "OPP")}
-                  disabled={loading}
-                >
-                  <TrendingUp size={16}/> Escalar p/ Orientação
-                </Button>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Utilize para <strong>transferir o caso</strong> para a Orientação/Coordenação quando o atendimento ultrapassa a alçada da AQV.
-                </p>
-            </div>
+            <DecisionCard 
+              label="Escalar p/ Coord." 
+              color="bg-indigo-600" 
+              icon={<TrendingUp size={20}/>}
+              description="Transfere o dossiê para análise da Coordenação de Curso."
+              onClick={() => handleUpdate("PENDING_OPP", "OPP")}
+              loading={loading}
+            />
           )}
 
-          {/* Action: Return to AQV (Only for OPP) */}
           {canReturnToAQV && (
-            <div className="group relative flex flex-col p-4 bg-white rounded-xl border border-violet-100 hover:border-violet-200 hover:bg-violet-50/30 transition-all shadow-sm">
-              <Button 
-                  className="gap-2 mb-3 w-full bg-violet-600 hover:bg-violet-700 text-white shadow-md shadow-violet-600/10 cursor-pointer transition-all active:scale-95"
-                  onClick={() => handleUpdate("PENDING_OPP", "AQV")}
-                  disabled={loading}
-                >
-                  <ArrowLeft size={16}/> Retornar ao AQV
-                </Button>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Utilize para <strong>devolver o caso</strong> para a equipe de AQV caso identifique que a demanda é estritamente psicossocial.
-                </p>
-            </div>
+            <DecisionCard 
+              label="Retornar ao AQV" 
+              color="bg-violet-600" 
+              icon={<ArrowLeft size={20}/>}
+              description="Devolve o atendimento para a equipe psicossocial."
+              onClick={() => handleUpdate("PENDING_OPP", "AQV")}
+              loading={loading}
+            />
           )}
 
-          {/* Action: Return to Teacher */}
-          <div className="group relative flex flex-col p-4 bg-white rounded-xl border border-border hover:border-red-200 hover:bg-red-50/30 transition-all shadow-sm">
-             <Button 
-                className="gap-2 mb-3 w-full bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-600/10 cursor-pointer transition-all active:scale-95"
-                onClick={() => handleUpdate("PENDING_TEACHER")}
-                disabled={loading}
-              >
-                <ArrowLeft size={16}/> Retornar ao Docente
-              </Button>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                Use este botão se as informações estiverem <strong>incompletas</strong> ou se o professor precisar realizar uma ação adicional antes de prosseguir.
-              </p>
-          </div>
+          <DecisionCard 
+            label="Incompleto / Docente" 
+            color="bg-amber-600" 
+            icon={<ArrowLeft size={20}/>}
+            description="Solicita mais dados ou correções ao professor."
+            onClick={() => handleUpdate("PENDING_TEACHER")}
+            loading={loading}
+          />
 
-          {/* Action: Forward to Guardian */}
-          <div className="group relative flex flex-col p-4 bg-white rounded-xl border border-border hover:border-amber-200 hover:bg-amber-50/30 transition-all shadow-sm">
-            <Button 
-               className="gap-2 mb-3 w-full bg-amber-600 hover:bg-amber-700 text-white shadow-md shadow-amber-600/10 cursor-pointer transition-all active:scale-95"
-               onClick={() => handleUpdate("PENDING_GUARDIAN")}
-               disabled={loading}
-            >
-              <XCircle size={16}/> Encaminhar s/ Concordância
-            </Button>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Use para <strong>avançar o fluxo</strong> para a etapa do Responsável (Pai/Mãe) mesmo quando não houve um acordo total ou ciência imediata.
-            </p>
-          </div>
+          <DecisionCard 
+            label="Chamar Responsável" 
+            color="bg-rose-600" 
+            icon={<XCircle size={20}/>}
+            description="Convoca os pais/tutores para reunião presencial."
+            onClick={() => handleUpdate("PENDING_GUARDIAN")}
+            loading={loading}
+          />
 
-          {/* Action: Conclude */}
-          <div className="group relative flex flex-col p-4 bg-white rounded-xl border border-zinc-200 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all shadow-sm">
-            <Button 
-              className="gap-2 mb-3 w-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/10 cursor-pointer transition-all active:scale-95"
-              onClick={() => handleUpdate("CONCLUDED")}
-              disabled={loading}
-            >
-              <CheckCircle2 size={16}/> Concluir Atendimento
-            </Button>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Use quando a demanda foi <strong>totalmente resolvida</strong> pela gestão e não requer mais etapas de acompanhamento externo.
-            </p>
-          </div>
+          <DecisionCard 
+            label="Concluir Fluxo" 
+            color="bg-emerald-600" 
+            icon={<Send size={20}/>}
+            description="Finaliza o dossiê com todas as metas atingidas."
+            onClick={() => handleUpdate("CONCLUDED")}
+            loading={loading}
+            fullWidth={!(canEscalate || canReturnToAQV)}
+          />
+
         </div>
-      </div>
+      </motion.div>
     </div>
+  );
+}
+
+function DecisionCard({ label, color, icon, description, onClick, loading, fullWidth }: any) {
+  return (
+    <button 
+      onClick={onClick}
+      disabled={loading}
+      className={cn(
+        "glass-card p-6 rounded-[2rem] border-white/5 hover:border-white/20 transition-all flex flex-col items-start gap-4 text-left group cursor-pointer active:scale-[0.97]",
+        fullWidth && "sm:col-span-2 shadow-2xl shadow-emerald-500/10"
+      )}
+    >
+      <div className={cn("p-3 rounded-2xl text-white shadow-xl transition-transform group-hover:scale-110 duration-500", color)}>
+        {icon}
+      </div>
+      <div className="space-y-1">
+         <span className="text-[11px] font-black uppercase tracking-tightest group-hover:text-primary transition-colors text-foreground">{label}</span>
+         <p className="text-[10px] font-bold text-muted-foreground/60 leading-relaxed font-sans">{description}</p>
+      </div>
+      <div className="mt-auto pt-4 flex items-center gap-2 opacity-30 group-hover:opacity-100 transition-all">
+         <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
+         <span className="text-[9px] font-black uppercase tracking-widest">Executar Ação</span>
+      </div>
+    </button>
   );
 }

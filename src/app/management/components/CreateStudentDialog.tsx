@@ -19,7 +19,7 @@ export function CreateStudentDialog({ classes }: { classes: any[] }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button className="h-10 rounded-xl gap-2 font-semibold shadow-sm px-5" />}>
+      <DialogTrigger render={<Button className="h-12 rounded-2xl gap-3 font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/10 px-8" />}>
         <Plus size={18}/> Novo Aluno
       </DialogTrigger>
       <DialogContent>

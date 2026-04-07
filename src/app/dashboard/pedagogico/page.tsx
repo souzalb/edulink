@@ -2,10 +2,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { FiaaDataTable } from "@/components/ui/FiaaDataTable";
-import { Layers } from "lucide-react";
-import Link from "next/link";
 import Header from "@/components/layout/Header";
-import { Settings } from "lucide-react";
+import { Settings, Sparkles, Activity, Users } from "lucide-react";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default async function PedagogicoDashboard() {
   const session = await getServerSession(authOptions);
@@ -33,7 +33,7 @@ export default async function PedagogicoDashboard() {
       teacher: true,
     },
     orderBy: { createdAt: "asc" },
-  }) as any; // Temporary cast to bypass complex Prisma inference issue in LSP
+  }) as any;
 
   const formattedFIAAs = fiasData.map((f: any) => ({
     id: f.id,
@@ -45,26 +45,53 @@ export default async function PedagogicoDashboard() {
   }));
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
       <Header />
 
-      <main className="flex-1 w-full mx-auto px-4 sm:px-8 lg:px-10 py-8 overflow-hidden flex flex-col">
-        <div className="mb-6 flex-shrink-0 flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">Fila de Atendimento</h2>
-            <p className="text-gray-500 mt-1">Gerencie e analise as FIAAs enviadas pelos docentes</p>
+      <main className="flex-1 w-full mx-auto px-4 sm:px-8 lg:px-10 py-12 relative z-10">
+        
+        {/* DASHBOARD HEADER */}
+        <div className="mb-12 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
+          <div className="space-y-4">
+             <div className="flex items-center gap-3 px-4 py-2 rounded-full glass-card w-fit text-[10px] font-black tracking-widest text-primary uppercase animate-float">
+                <Activity size={14} className="text-primary"/> Monitoramento Ativo
+             </div>
+              <div className="space-y-1">
+                <h1 className="text-3xl lg:text-4xl font-heading font-black text-foreground tracking-tight leading-none drop-shadow-sm uppercase-none pl-1">Fila de Gestão</h1>
+                <p className="text-sm text-muted-foreground font-bold tracking-tight pl-1.5 italic opacity-60 max-w-lg">Análise e acompanhamento do fluxo pedagógico institucional.</p>
+              </div>
           </div>
-          <Link 
-            href="/management" 
-            className="flex items-center gap-2 bg-white border border-border px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-primary hover:border-primary transition-all shadow-sm cursor-pointer"
-          >
-            <Settings size={18} />
-            Configurações e Cadastros
-          </Link>
+
+          <div className="flex items-center gap-4">
+             <div className="hidden sm:flex flex-col items-end border-r border-border/40 pr-6 py-2">
+                <span className="text-2xl font-black text-foreground leading-none">{formattedFIAAs.length}</span>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Pendentes na Fila</span>
+             </div>
+             <Link 
+                href="/management" 
+                className="group relative flex items-center gap-3 glass-card px-8 py-4 rounded-2xl text-sm font-black text-foreground hover:text-primary transition-all shadow-xl shadow-primary/5 active:scale-95"
+              >
+                <div className="p-1.5 bg-primary/10 rounded-lg group-hover:rotate-90 transition-transform duration-500">
+                   <Settings size={18} className="text-primary" />
+                </div>
+                Portal de Configurações
+              </Link>
+          </div>
         </div>
 
-        <div className="flex-1 min-h-[500px]">
-          <FiaaDataTable items={formattedFIAAs} />
+        {/* MAIN STAGE */}
+        <div className="glass-card rounded-[2.5rem] p-4 lg:p-8 shadow-2xl shadow-primary/5 animate-in fade-in slide-in-from-bottom-5 duration-700">
+           <div className="mb-8 flex items-center justify-between px-4">
+              <div className="flex items-center gap-3">
+                 <div className="w-1.5 h-6 bg-primary rounded-full" />
+                 <h2 className="text-xl font-heading font-black text-foreground tracking-tight uppercase-none">Listagem em Tempo Real</h2>
+              </div>
+              <div className="flex gap-2">
+                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                 <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Live Updates</span>
+              </div>
+           </div>
+           <FiaaDataTable items={formattedFIAAs} />
         </div>
       </main>
     </div>

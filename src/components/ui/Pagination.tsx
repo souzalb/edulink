@@ -38,7 +38,7 @@ export function Pagination({
   const endItem = Math.min(currentPage * pageSize, totalItems);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-2 border-t border-border bg-white rounded-b-xl">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-2 border-t border-border bg-card rounded-b-xl transition-colors">
       <div className="flex items-center gap-4 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <span className="hidden sm:inline">Itens por página</span>
@@ -46,7 +46,7 @@ export function Pagination({
             value={pageSize.toString()} 
             onValueChange={(val) => onPageSizeChange(Number(val))}
           >
-            <SelectTrigger className="h-8 w-[70px] bg-zinc-50 border-zinc-200">
+            <SelectTrigger className="h-8 w-[70px] bg-muted/50 border-border">
               <SelectValue placeholder={pageSize.toString()} />
             </SelectTrigger>
             <SelectContent>
@@ -58,7 +58,7 @@ export function Pagination({
             </SelectContent>
           </Select>
         </div>
-        <div className="font-medium">
+        <div className="font-medium text-foreground">
           Mostrando {startItem}-{endItem} de {totalItems}
         </div>
       </div>
@@ -67,7 +67,7 @@ export function Pagination({
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 hidden sm:flex border-zinc-200"
+          className="h-8 w-8 hidden sm:flex border-border"
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
         >
@@ -76,7 +76,7 @@ export function Pagination({
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 border-zinc-200"
+          className="h-8 w-8 border-border"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
@@ -84,14 +84,14 @@ export function Pagination({
         </Button>
         
         <div className="flex items-center gap-1 mx-2">
-          <span className="text-sm font-bold text-foreground">Página {currentPage}</span>
-          <span className="text-sm text-muted-foreground">de {totalPages || 1}</span>
+          <span className="text-sm font-bold text-foreground transition-colors">Página {currentPage}</span>
+          <span className="text-sm text-muted-foreground transition-colors">de {totalPages || 1}</span>
         </div>
 
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 border-zinc-200"
+          className="h-8 w-8 border-border"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages || totalPages === 0}
         >
@@ -100,7 +100,7 @@ export function Pagination({
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 hidden sm:flex border-zinc-200"
+          className="h-8 w-8 hidden sm:flex border-border"
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages || totalPages === 0}
         >

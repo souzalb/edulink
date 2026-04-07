@@ -32,7 +32,7 @@ export function CreateBulkStudentsDialog({ classes }: { classes: any[] }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="outline" className="h-10 rounded-xl gap-2 font-semibold shadow-sm px-5 border-primary/20 text-primary hover:bg-primary/5 hover:text-primary transition-all" />}>
+      <DialogTrigger render={<Button variant="outline" className="h-12 rounded-2xl gap-3 font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/5 px-8 border-primary/20 text-primary hover:bg-primary/5 hover:text-primary transition-all" />}>
         <Users size={18}/> Cadastro em Massa
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">

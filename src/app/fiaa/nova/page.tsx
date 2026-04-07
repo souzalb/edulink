@@ -1,32 +1,39 @@
+import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import Header from "@/components/layout/Header";
 import { FiaaForm } from "./FiaaForm";
+import Header from "@/components/layout/Header";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default async function NovaFiaaPage() {
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "DOCENTE") {
-    redirect("/login");
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p className="text-red-500 font-bold">Acesso negado. Apenas docentes podem emitir FIAAs.</p>
+      </div>
+    );
   }
 
-  // Fetch classes related to this teacher, include students
-  const classes = await prisma.class.findMany({
-    where: { 
-      teachers: { some: { id: session.user.id } } 
+  // Get classes for this teacher
+  const teacherClasses = await prisma.class.findMany({
+    where: {
+      teachers: {
+        some: { id: session.user.id }
+      }
     },
-    include: { 
-      students: { orderBy: { name: "asc" } } 
+    include: {
+      students: {
+        orderBy: { name: 'asc' }
+      }
     },
-    orderBy: { name: "asc" },
+    orderBy: { name: 'asc' }
   });
 
   return (
-    <div className="min-h-screen bg-muted/40 pb-12">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       
       <main className="flex-1 w-full mx-auto px-4 sm:px-8 lg:px-10 mt-8 mb-12">
@@ -44,7 +51,7 @@ export default async function NovaFiaaPage() {
             </p>
           </div>
 
-          <FiaaForm classes={classes as any} />
+          <FiaaForm classes={teacherClasses as any} />
         </div>
       </main>
     </div>

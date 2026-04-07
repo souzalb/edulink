@@ -40,18 +40,18 @@ export default async function ManagementPage() {
   }) as any[];
 
   return (
-    <div className="min-h-screen bg-muted/40 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col transition-colors">
       <Header />
 
-      <main className="flex-1 w-full mx-auto px-4 sm:px-8 lg:px-10 py-8">
+      <main className="flex-1 w-full mx-auto px-4 sm:px-8 lg:px-10 py-8 overflow-hidden flex flex-col">
 
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <h2 className="text-2xl font-bold text-gray-900">Gestão do Sistema</h2>
-            <p className="text-gray-500 mt-1">Administre turmas, alunos e o corpo docente da unidade.</p>
+            <h2 className="text-3xl font-heading font-bold text-foreground tracking-tight">Gestão do Sistema</h2>
+            <p className="text-muted-foreground mt-1 font-medium italic">Administre turmas, alunos e o corpo docente da unidade.</p>
           </div>
-          <Link href="/dashboard/pedagogico" className="text-sm font-semibold text-muted-foreground hover:text-foreground flex items-center gap-2 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-border transition-all hover:shadow-md">
-            <ArrowLeft size={18} /> Voltar ao Painel
+          <Link href="/dashboard/pedagogico" className="text-sm font-bold text-muted-foreground hover:text-primary flex items-center gap-2 bg-card px-5 py-2.5 rounded-xl shadow-sm border border-border transition-all hover:shadow-md cursor-pointer group">
+            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Voltar ao Painel
           </Link>
         </div>
 
